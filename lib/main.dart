@@ -158,40 +158,27 @@ class _SecondRouteState extends State<SecondRoute>
     // Replace Placeholder with actual content
     return Scaffold(
       // Using Container with BoxDecoration for the background instead of scaffoldBackgroundColor
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque, // ensures full screen tap detection
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SecondRoute()),
-          );
-        },
-        child: Container(
-          // BoxDecoration allows us to add a gradient
-          decoration: const BoxDecoration(
-            // Linear gradient from top to bottom
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                //Gradient Colors
-                Color.fromARGB(255, 0, 103, 197),
-                Color.fromARGB(255, 99, 170, 237),
-              ],
-            ),
+      body: Container(
+        // BoxDecoration allows us to add a gradient
+        decoration: const BoxDecoration(
+          // Linear gradient from top to bottom
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              //Gradient Colors
+              Color.fromARGB(255, 0, 103, 197),
+              Color.fromARGB(255, 99, 170, 237),
+            ],
           ),
-          // Child content of your app
-          child: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  HoverAnimation(),
-                  const SizedBox(height: 30),
-                  ObscuredTextField(label: "Username"),
-                  ObscuredTextField(label: "Password"),
-                ],
-              ),
+        ),
+        // Child content of your app
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [HoverAnimation(), MyCustomForm()],
             ),
           ),
         ),
@@ -200,14 +187,115 @@ class _SecondRouteState extends State<SecondRoute>
   }
 }
 
+// Define a custom Form widget.
+class MyCustomForm extends StatefulWidget {
+  const MyCustomForm({super.key});
+
+  @override
+  MyCustomFormState createState() {
+    return MyCustomFormState();
+  }
+}
+
+// Define a corresponding State class.
+// This class holds data related to the form.
+class MyCustomFormState extends State<MyCustomForm> {
+  String _errorMessage = '';
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a `GlobalKey <FormState>`,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            ObscuredTextField(
+              label: "Username",
+              obscured: false,
+              controller: _usernameController,
+            ),
+            const SizedBox(height: 30),
+            ObscuredTextField(
+              label: "Password",
+              obscured: true,
+              controller: _passwordController,
+            ),
+            const SizedBox(height: 10),
+            if (_errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _errorMessage,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            const SizedBox(height: 10),
+
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  final username = _usernameController.text;
+                  final password = _passwordController.text;
+
+                  if (username == 'admin' && password == '1234') {
+                    print("Success!");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ThirdRoute(),
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      _errorMessage = 'Incorrect username and password';
+                    });
+                    print("Invalid credentials");
+                  }
+                }
+              },
+
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ObscuredTextField extends StatelessWidget {
   final String label;
-  const ObscuredTextField({super.key, required this.label});
+  final bool obscured;
+  final TextEditingController controller;
+  const ObscuredTextField({
+    super.key,
+    required this.label,
+    required this.obscured,
+    required this.controller,
+  });
   Widget build(BuildContext context) {
     return SizedBox(
       width: 250,
-      child: TextField(
-        obscureText: true,
+      child: TextFormField(
+        controller: controller,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a ' + label.toLowerCase();
+          }
+          return null;
+        },
+        obscureText: obscured,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: label,
@@ -216,3 +304,121 @@ class ObscuredTextField extends StatelessWidget {
     );
   }
 }
+
+class ThirdRoute extends StatefulWidget {
+  const ThirdRoute({super.key});
+
+  @override
+  State<ThirdRoute> createState() => _ThirdRouteState();
+}
+
+class _ThirdRouteState extends State<ThirdRoute>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+    // Bounce in
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Replace Placeholder with actual content
+    return Scaffold(
+      // Using Container with BoxDecoration for the background instead of scaffoldBackgroundColor
+      body: Container(
+        // BoxDecoration allows us to add a gradient
+        decoration: const BoxDecoration(
+          // Linear gradient from top to bottom
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              //Gradient Colors
+              Color.fromARGB(255, 0, 103, 197),
+              Color.fromARGB(255, 99, 170, 237),
+            ],
+          ),
+        ),
+        // Child content of your app
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+                HoverAnimation(),
+                const Text(
+                  // TODO: Replace text with LOGO
+                  'SUCCESS',
+                  style: TextStyle(
+                    fontFamily: "Silkscreen",
+                    fontSize: 40,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// A screen that allows users to take a picture using a given camera.
+// class TakePictureScreen extends StatefulWidget {
+//   const TakePictureScreen({super.key, required this.camera});
+
+//   final CameraDescription camera;
+
+//   @override
+//   TakePictureScreenState createState() => TakePictureScreenState();
+// }
+
+// class TakePictureScreenState extends State<TakePictureScreen> {
+//   late CameraController _controller;
+//   late Future<void> _initializeControllerFuture;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     // To display the current output from the Camera,
+//     // create a CameraController.
+//     _controller = CameraController(
+//       // Get a specific camera from the list of available cameras.
+//       widget.camera,
+//       // Define the resolution to use.
+//       ResolutionPreset.medium,
+//     );
+
+//     // Next, initialize the controller. This returns a Future.
+//     _initializeControllerFuture = _controller.initialize();
+//   }
+
+//   @override
+//   void dispose() {
+//     // Dispose of the controller when the widget is disposed.
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Fill this out in the next steps.
+//     return Container();
+//   }
+// }
