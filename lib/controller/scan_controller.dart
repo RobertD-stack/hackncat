@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 class ScanController extends GetxController {
   @override
   void onInit() {
@@ -22,7 +23,6 @@ class ScanController extends GetxController {
   var isCameraInitialized = false.obs;
   var cameraCount = 0;
 
-
   initCamera() async {
     if (await Permission.camera.request().isGranted) {
       cameras = await availableCameras();
@@ -33,8 +33,5 @@ class ScanController extends GetxController {
     } else {
       print("Permission Denied");
     }
-  }
-  objectDetector() as ync {
-    var detector = await Tflite.runModelOnFrame
   }
 }

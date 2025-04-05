@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hackncat/views/camera_view.dart';
 
+
 void main() {
   runApp(const FirstRoute());
 }
