@@ -1,11 +1,22 @@
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import base64
+from google import genai
+from google.genai import types
+import PIL.Image
 
-train_datagen = ImageDataGenerator(rescale=1./255,
-                                   shear_range=0.2,
-                                   zoom_range=0.2,
-                                   horizontal_flip=True)
+# from kaggle_secrets import UserSecretsClient
 
-val_datagen = ImageDataGenerator(rescale=1./255)
+# user_secrets = UserSecretsClient()
+GOOGLE_API_KEY = "AIzaSyA8VPfs5AH4Ftzfthc8EJtEIoZDeZ1mA6M"
+client = genai.Client(api_key=GOOGLE_API_KEY)
+MODEL_ID = "models/gemini-2.0-flash-exp"
+def describeImage(filename):
+    
+    image = PIL.Image.open("assets/Plants/")   
+
+
+    # Generate content
+    response = client.models.generate_content(
+        model="gemini-2.0-flash", contents = ["Describe this image", image]
+
+    )
+    return response.text
