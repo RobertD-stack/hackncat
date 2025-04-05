@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hackncat/views/camera_view.dart';
 
 void main() {
   runApp(const FirstRoute());
@@ -253,7 +254,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ThirdRoute(),
+                        builder: (context) => const CameraView(),
                       ),
                     );
                   } else {
